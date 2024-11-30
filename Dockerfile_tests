@@ -1,0 +1,15 @@
+FROM library/debian:bookworm-slim
+USER root
+
+WORKDIR /opt/project
+
+COPY debian_packages_tests.txt    /opt/project/debian_packages_tests.txt
+RUN apt-get update --allow-insecure-repositories && \
+    DEBIAN_FRONTEND=noninteractive xargs -a /opt/project/debian_packages_tests.txt \
+    apt-get install -y --allow-unauthenticated && \
+    apt-get clean && \
+    rm -rf /opt/project/debian_packages_tests.txt
+
+COPY tests  /opt/project/
+
+ENTRYPOINT ["sh", "-c", "pytest", "/opt/project/tests/test_rest_api.py"]

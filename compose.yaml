@@ -1,7 +1,8 @@
 services:
   tests:
-    # TODO by students: create own tests image using separate Dockerfile
-    build: .
+    build:
+      context: .
+      dockerfile: ./Dockerfile_tests
     container_name: tests-server
     depends_on:
       api-mock:
@@ -12,9 +13,7 @@ services:
     volumes:
       - .:/opt/project
       - api_mock_certs:/root/ca/rsa/volumed_dir
-#  infinite loop to run container
-#    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]
-    entrypoint: ["ping", "-c", "5", "api-mock-server"]
+    entrypoint: ["sh", "-c", "pytest", ".\tests\test_rest_api.py"]
 
   api-mock:
     build: .
