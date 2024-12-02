@@ -13,7 +13,7 @@ services:
     volumes:
       - .:/opt/project
       - api_mock_certs:/root/ca/rsa/volumed_dir
-    entrypoint: ["sh", "-c", "pytest", ".\tests\test_rest_api.py"]
+    entrypoint: ["sh", "-c", "pytest", "./tests/test_rest_api.py"]
 
   api-mock:
     build: .

@@ -1,6 +1,7 @@
 FROM library/debian:bookworm-slim
 USER root
 
+# set a working directory and then copy all the files for our tests
 WORKDIR /opt/project
 
 COPY debian_packages_tests.txt    /opt/project/debian_packages_tests.txt
