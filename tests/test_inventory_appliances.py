@@ -1,10 +1,8 @@
-import requests
+from tests.request_utilities import execute_put, execute_get
 import json
 import pytest
 
 
-BASE_URL = "http://api-mock-server:80"
-HEADERS = {'Content-type': 'application/json'}
 HTTP_STATUS_CODES = list(range(200, 204)) + list(range(205, 209)) + [226] + list(range(300, 304)) + \
                     list(range(305, 309)) + list(range(400, 419)) + list(range(421,427)) + [428, 429, 431, 451] + \
                     list(range(500, 509)) + [510, 511]
@@ -22,13 +20,13 @@ def test_put_get_inventory_appliances(status_code):
 
     expected_data_json["status_code"] = status_code
 
-    put_response = requests.put(f"{BASE_URL}/inventory/devices", headers=HEADERS, json=expected_data_json)
+    put_response = execute_put("/inventory/devices", expected_data_json)
     put_response_json = put_response.json()
     assert put_response.status_code == 200
     assert put_response_json["new_status_code"] == status_code
     assert put_response_json["new_body"] == expected_data_json["body"]
 
-    get_rsp = requests.get(f"{BASE_URL}/inventory/devices")
+    get_rsp = execute_get("/inventory/devices")
 
     assert get_rsp.status_code == expected_data_json["status_code"]
     assert get_rsp.json() == expected_data_json["body"]
@@ -41,7 +39,7 @@ def test_put_inventory_without_key_body():
     with open("tests/test_data/PUT_inventory_without_body.json", 'r') as expected_data_file:
         expected_data_json = json.load(expected_data_file)
 
-    put_response = requests.put(f"{BASE_URL}/inventory/devices", headers=HEADERS, json=expected_data_json)
+    put_response = execute_put("/inventory/devices", expected_data_json)
     assert put_response.status_code == 500
 
 def test_put_inventory_without_key_status_code():
@@ -52,7 +50,7 @@ def test_put_inventory_without_key_status_code():
     with open("tests/test_data/PUT_inventory_without_status_code.json", 'r') as expected_data_file:
         expected_data_json = json.load(expected_data_file)
 
-    put_response = requests.put(f"{BASE_URL}/inventory/devices", headers=HEADERS, json=expected_data_json)
+    put_response = execute_put("/inventory/devices", expected_data_json)
     assert put_response.status_code == 500
 
 
@@ -62,5 +60,5 @@ def test_put_inventory_without_request_body():
     PUT request body should contain both body and status_code.
     In this case PUT request doesn't have any content.
     """
-    put_response = requests.put(f"{BASE_URL}/inventory/devices", headers=HEADERS)
+    put_response = execute_put("/inventory/devices")
     assert put_response.status_code == 400

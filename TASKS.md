@@ -96,59 +96,59 @@ URL [https://github.com/waad19/mock-api-server](https://github.com/waad19/mock-a
 ### Investigate the database configuration
 
 - Understand the `mock-database` service configuration defined in `docker-compose.yml`.
-- Start the database service and connect to it using the credentials specified in configuration.
-    - Use `psql`, pgAdmin, DBeaver, or any preferred PostgreSQL client.
-- Execute the provided queries and note the output.
-- Queries to execute:
-    - **Retrieve top 10 most expensive products:**
-       ```sql
-       SELECT product_name, unit_price
-       FROM products
-       ORDER BY unit_price DESC
-       LIMIT 10;
-       ```
-       - **`ORDER BY`**: Used to sort the result set in ascending or descending order.
-       - **`DESC`**: Sorts the result in descending order.
-       - **`LIMIT`**: Limits the number of rows returned.
-       - Fetches `product_name` and `unit_price` of the top 10 most expensive products.
-    - **Sum of freight charges by employee:**
-       ```sql
-       SELECT employee_id, SUM(freight)
-       FROM orders
-       GROUP BY employee_id;
-       ```
-       - **`SUM`**: An aggregate function that returns the sum of a numeric column.
-       - Fetches `employee_id` and the sum of `freight` charges grouped by each employee.
-    - **City-wise average, maximum, and minimum age of employees in London:**
-       ```sql
-       SELECT city,
-         AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
-         MAX(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
-         MIN(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)))
-       FROM employees
-       WHERE city = 'London'
-       GROUP BY city;
-       ```
-       - **`AVG`**, **`MAX`**, **`MIN`**: Aggregate functions to calculate average, maximum, and minimum values respectively.
-       - **`CURRENT_TIMESTAMP`**: Returns the current date and time.
-       - Fetches `city`, average age, maximum age, and minimum age of employees in London.
-    - **City-wise average age of employees above 60:**
-       ```sql
-       SELECT city, AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))) AS avg_age
-       FROM employees
-       GROUP BY city
-       HAVING EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)) > 60;
-       ```
-       - **`HAVING`**: Used to filter records that work on aggregated data.
-       - Fetches `city` and average age of employees whose age is above 60, grouped by `city`.
-    - **Retrieve top 3 oldest employees:**
-       ```sql
-       SELECT first_name, last_name, EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)) AS age
-       FROM employees
-       ORDER BY age DESC
-       LIMIT 3;
-       ```
-       - Fetches `first_name`, `last_name`, and age of the top 3 oldest employees.
+  - Start the database service and connect to it using the credentials specified in configuration.
+      - Use `psql`, pgAdmin, DBeaver, or any preferred PostgreSQL client.
+        - Execute the provided queries and note the output.
+          - Queries to execute:
+              - **Retrieve top 10 most expensive products:**
+                 ```sql
+                 SELECT product_name, unit_price
+                 FROM products
+                 ORDER BY unit_price DESC
+                 LIMIT 10;
+                 ```
+                 - **`ORDER BY`**: Used to sort the result set in ascending or descending order.
+                 - **`DESC`**: Sorts the result in descending order.
+                 - **`LIMIT`**: Limits the number of rows returned.
+                 - Fetches `product_name` and `unit_price` of the top 10 most expensive products.
+              - **Sum of freight charges by employee:**
+                 ```sql
+                 SELECT employee_id, SUM(freight)
+                 FROM orders
+                 GROUP BY employee_id;
+                 ```
+                 - **`SUM`**: An aggregate function that returns the sum of a numeric column.
+                 - Fetches `employee_id` and the sum of `freight` charges grouped by each employee.
+              - **City-wise average, maximum, and minimum age of employees in London:**
+                 ```sql
+                 SELECT city,
+                   AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
+                   MAX(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
+                   MIN(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)))
+                 FROM employees
+                 WHERE city = 'London'
+                 GROUP BY city;
+                 ```
+                 - **`AVG`**, **`MAX`**, **`MIN`**: Aggregate functions to calculate average, maximum, and minimum values respectively.
+                 - **`CURRENT_TIMESTAMP`**: Returns the current date and time.
+                 - Fetches `city`, average age, maximum age, and minimum age of employees in London.
+              - **City-wise average age of employees above 60:**
+                 ```sql
+                  SELECT city, AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))) AS avg_age
+                  FROM employees
+                  GROUP BY city
+                  HAVING AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))) > 60;
+                 ```
+                 - **`HAVING`**: Used to filter records that work on aggregated data.
+                 - Fetches `city` and average age of employees whose age is above 60, grouped by `city`.
+              - **Retrieve top 3 oldest employees:**
+                 ```sql
+                 SELECT first_name, last_name, EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)) AS age
+                 FROM employees
+                 ORDER BY age DESC
+                 LIMIT 3;
+                 ```
+                 - Fetches `first_name`, `last_name`, and age of the top 3 oldest employees.
 
 ### Write Python tests to verify database operation
 

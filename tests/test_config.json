@@ -1,0 +1,6 @@
+{
+  "use_https": false,
+  "https_config": {
+    "cert_file": "/root/ca/rsa/volumed_dir/ca.cert.pem"
+  }
+}

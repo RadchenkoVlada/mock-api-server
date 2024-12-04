@@ -11,6 +11,4 @@ RUN apt-get update --allow-insecure-repositories && \
     apt-get clean && \
     rm -rf /opt/project/debian_packages_tests.txt
 
-COPY tests  /opt/project/
-
-ENTRYPOINT ["sh", "-c", "pytest", "/opt/project/tests/test_rest_api.py"]
+ENTRYPOINT ["sh", "-c", "pytest", "./tests"]
