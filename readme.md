@@ -3,6 +3,10 @@ mock-api-server has 2 flask apps running simultaneously but separately.
 It means when you change something (like variables) via http request you won't see changes via https request and vice versa.  
 But file sharing on the system works for both
 
+### ENVIRONMENTAL VARIABLES CONFIGURATION
+
+Use `database_example.env` to create your local `database.env`. There are variables with Database credentials.
+
 ### BUILD
 ```
 docker-compose build

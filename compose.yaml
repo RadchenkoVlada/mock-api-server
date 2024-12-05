@@ -7,6 +7,8 @@ services:
     depends_on:
       api-mock:
         condition: service_started
+      mock-database:
+        condition: service_healthy
     environment:
       - REQUESTS_CA_BUNDLE=/root/ca/rsa/volumed_dir/full-chain.cert.pem
     working_dir: /opt/project
@@ -29,17 +31,19 @@ services:
     image: postgres:latest
     container_name: mock-db-server
     restart: always
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mockdb
+    env_file: "database.env"
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 # Almost empty database
 #      - ./database/empty.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
-
+    healthcheck:
+      # localhost is used in order to wait until init.sql script is done
+      test: pg_isready -h localhost -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 2s
+      timeout: 60s
+      retries: 20
 
 volumes:
   api_mock_certs:
