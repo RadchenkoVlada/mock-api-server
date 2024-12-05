@@ -1,10 +1,9 @@
 import json
 import requests
+from tests.constants import BASE_URL_HTTP, BASE_URL_HTTPS, HEADERS
+
 
 global_config = None
-BASE_URL_HTTP = "http://api-mock-server:80"
-BASE_URL_HTTPS = "https://api-mock-server:443"
-HEADERS = {'Content-type': 'application/json'}
 
 def get_config():
     global global_config
@@ -22,12 +21,12 @@ def execute_get(url):
         return requests.get(BASE_URL_HTTP + url)
 
 
-def execute_post(url, body=None):
+def execute_post(url):
     config = get_config()
     if config["use_https"]:
-        return requests.post(BASE_URL_HTTPS + url, headers=HEADERS, json=body, verify=config["https_config"]["cert_file"])
+        return requests.post(BASE_URL_HTTPS + url, headers=HEADERS, verify=config["https_config"]["cert_file"])
     else:
-        return requests.post(BASE_URL_HTTP + url, headers=HEADERS, json=body)
+        return requests.post(BASE_URL_HTTP + url, headers=HEADERS)
 
 
 def execute_put(url, body=None):
