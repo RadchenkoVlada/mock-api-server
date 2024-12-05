@@ -1,15 +1,13 @@
 from tests.request_utilities import execute_put, execute_get, execute_post
+from tests.constants import HTTP_STATUS_CODES
 import json
 import pytest
 
 TEST_GUID_ADD_URL = "12345678-abcd-ef01-2345-6789abcde-aka"
-HTTP_STATUS_CODES = list(range(200, 204)) + list(range(205, 209)) + [226] + list(range(300, 304)) + \
-                    list(range(305, 309)) + list(range(400, 419)) + list(range(421,427)) + [428, 429, 431, 451] + \
-                    list(range(500, 509)) + [510, 511]
 
 
-@pytest.fixture
-def clear_guids_user():
+@pytest.fixture(autouse=True)
+def clear_guids():
     """
     This fixture is run before each test case.
     It's required in order to clean the internal guids data in the mock server,
@@ -21,7 +19,7 @@ def clear_guids_user():
     assert put_response.status_code == 200
 
 
-def test_post_guid_add(clear_guids_user):
+def test_post_guid_add():
     """
     Verifying positive case: that response return valid body and status for POST request which contain guid in URL.
     """
@@ -32,7 +30,7 @@ def test_post_guid_add(clear_guids_user):
     assert TEST_GUID_ADD_URL in post_response.json()['guids']
 
 
-def test_post_guid_add_without_guid(clear_guids_user):
+def test_post_guid_add_without_guid():
     """
     Verifying negative case: that response return status 404 for POST request which contain no guid in URL.
     """
@@ -42,7 +40,7 @@ def test_post_guid_add_without_guid(clear_guids_user):
 
 
 @pytest.mark.parametrize("status_code", HTTP_STATUS_CODES)
-def test_put_get_guids(status_code, clear_guids_user):
+def test_put_get_guids(status_code):
     """
     Test guids functionality of mock-api-server.
     GET request should be called always after PUT, because PUT can change status code and response of GET.
@@ -65,7 +63,7 @@ def test_put_get_guids(status_code, clear_guids_user):
     assert get_rsp.status_code == expected_data_json["status_code"]
     assert get_rsp.json() == expected_data_json["body"]
 
-def test_put_guids_without_key_body(clear_guids_user):
+def test_put_guids_without_key_body():
     """
     Negative test for PUT guids functionality of mock-api-server.
     PUT request shouldn't contain the key body,but contain the key status_code.
@@ -77,7 +75,7 @@ def test_put_guids_without_key_body(clear_guids_user):
     assert put_response.status_code == 500
 
 
-def test_put_guids_without_key_status_code(clear_guids_user):
+def test_put_guids_without_key_status_code():
     """
     Negative test for PUT guids functionality of mock-api-server.
     PUT request body should contain both body and status_code.
@@ -90,7 +88,7 @@ def test_put_guids_without_key_status_code(clear_guids_user):
     assert put_response.status_code == 500
 
 
-def test_put_guids_without_request_body(clear_guids_user):
+def test_put_guids_without_request_body():
     """
     Negative test for PUT guids functionality of mock-api-server.
     PUT request body should contain both body and status_code.
@@ -99,3 +97,19 @@ def test_put_guids_without_request_body(clear_guids_user):
     put_response = execute_put("/guids")
     assert put_response.status_code == 400
 
+
+def test_post_several_items():
+    """
+    Test POST request by adding several guids(one at a time) to guids list.
+    Then verifying guids list using GET request
+    """
+    for _ in range(5):
+        post_response = execute_post(f"/{TEST_GUID_ADD_URL}/add")
+        print("post_response.json()=", post_response.json())
+        print("post_response.status_code=", post_response.status_code)
+        assert post_response.status_code == 200
+        assert TEST_GUID_ADD_URL in post_response.json()['guids']
+
+    get_rsp = execute_get(f"/guids")
+    assert get_rsp.status_code == 200
+    assert get_rsp.json()['guids'] == [TEST_GUID_ADD_URL] * 5
