@@ -1,11 +1,10 @@
 from tests.request_utilities import execute_put, execute_get
 from tests.constants import HTTP_STATUS_CODES
-import json
-import pytest
+import json, pytest
 
 
 @pytest.mark.parametrize("status_code", HTTP_STATUS_CODES)
-def test_put_get_inventory_appliances(status_code):
+def test_put_get_inventory_appliances(status_code: int):
     """
     Test inventory functionality of mock-api-server.
     GET request should be called always after PUT, because PUT can change status code and response of GET.

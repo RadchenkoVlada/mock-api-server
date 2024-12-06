@@ -1,7 +1,6 @@
 from tests.request_utilities import execute_put, execute_get, execute_post
 from tests.constants import HTTP_STATUS_CODES
-import json
-import pytest
+import json, pytest
 
 TEST_GUID_ADD_URL = "12345678-abcd-ef01-2345-6789abcde-aka"
 
@@ -38,7 +37,7 @@ def test_post_guid_add_without_guid():
 
 
 @pytest.mark.parametrize("status_code", HTTP_STATUS_CODES)
-def test_put_get_guids(status_code):
+def test_put_get_guids(status_code: int):
     """
     Test guids functionality of mock-api-server.
     GET request should be called always after PUT, because PUT can change status code and response of GET.

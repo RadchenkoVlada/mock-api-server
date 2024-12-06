@@ -4,3 +4,6 @@ HTTP_STATUS_CODES = list(range(200, 204)) + list(range(205, 209)) + [226] + list
 BASE_URL_HTTP = "http://api-mock-server:80"
 BASE_URL_HTTPS = "https://api-mock-server:443"
 HEADERS = {'Content-type': 'application/json'}
+
+ENV_FILENAME = "database.env"
+CONFIG_FILENAME = "tests/test_config.json"
