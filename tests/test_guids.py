@@ -25,7 +25,6 @@ def test_post_guid_add():
     """
     post_response = execute_post(f"/{TEST_GUID_ADD_URL}/add")
     print("post_response.json()=", post_response.json())
-    print("post_response.status_code=", post_response.status_code)
     assert post_response.status_code == 200
     assert TEST_GUID_ADD_URL in post_response.json()['guids']
 
@@ -35,7 +34,6 @@ def test_post_guid_add_without_guid():
     Verifying negative case: that response return status 404 for POST request which contain no guid in URL.
     """
     post_response = execute_post(f"//add")
-    print("post_response.status_code=", post_response.status_code)
     assert post_response.status_code == 404
 
 
@@ -82,7 +80,6 @@ def test_put_guids_without_key_status_code():
     """
     with open("tests/test_data/PUT_guids_without_key_status_code.json", 'r') as expected_data_file:
         expected_data_json = json.load(expected_data_file)
-        print(expected_data_json)
 
     put_response = execute_put("/guids", expected_data_json)
     assert put_response.status_code == 500
@@ -106,10 +103,17 @@ def test_post_several_items():
     for _ in range(5):
         post_response = execute_post(f"/{TEST_GUID_ADD_URL}/add")
         print("post_response.json()=", post_response.json())
-        print("post_response.status_code=", post_response.status_code)
         assert post_response.status_code == 200
         assert TEST_GUID_ADD_URL in post_response.json()['guids']
 
     get_rsp = execute_get(f"/guids")
     assert get_rsp.status_code == 200
     assert get_rsp.json()['guids'] == [TEST_GUID_ADD_URL] * 5
+
+
+def test_get_guids():
+    with open("tests/test_data/PUT_guids_empty_list.json", 'r') as expected_data_file:
+        expected_data_json = json.load(expected_data_file)
+    get_rsp = execute_get(f"/guids")
+    assert get_rsp.status_code == expected_data_json["status_code"]
+    assert get_rsp.json() == expected_data_json["body"]
