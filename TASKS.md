@@ -122,9 +122,9 @@ URL [https://github.com/waad19/mock-api-server](https://github.com/waad19/mock-a
               - **City-wise average, maximum, and minimum age of employees in London:**
                  ```sql
                  SELECT city,
-                   AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
-                   MAX(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
-                   MIN(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)))
+                   AVG(EXTRACT(year from AGE(birth_date))),
+                   MAX(EXTRACT(year from AGE(birth_date))),
+                   MIN(EXTRACT(year from AGE(birth_date)))
                  FROM employees
                  WHERE city = 'London'
                  GROUP BY city;
@@ -134,16 +134,16 @@ URL [https://github.com/waad19/mock-api-server](https://github.com/waad19/mock-a
                  - Fetches `city`, average age, maximum age, and minimum age of employees in London.
               - **City-wise average age of employees above 60:**
                  ```sql
-                  SELECT city, AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))) AS avg_age
+                  SELECT city, AVG(EXTRACT(year from AGE(birth_date))) AS avg_age
                   FROM employees
                   GROUP BY city
-                  HAVING AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))) > 60;
+                  HAVING AVG(EXTRACT(year from AGE(birth_date))) > 60;
                  ```
                  - **`HAVING`**: Used to filter records that work on aggregated data.
                  - Fetches `city` and average age of employees whose age is above 60, grouped by `city`.
               - **Retrieve top 3 oldest employees:**
                  ```sql
-                 SELECT first_name, last_name, EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)) AS age
+                 SELECT first_name, last_name, EXTRACT(year from AGE(birth_date)) AS age
                  FROM employees
                  ORDER BY age DESC
                  LIMIT 3;

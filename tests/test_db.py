@@ -1,7 +1,6 @@
-from collections import namedtuple
-from decimal import Decimal
 import psycopg2, pytest
 from dotenv import dotenv_values
+from tests.file_utilities import read_csv_file
 
 ENV_FILENAME = "database.env"
 
@@ -44,38 +43,38 @@ TEST_DATA = (
 FROM products
 ORDER BY unit_price DESC
 LIMIT 10;
-""", ('Côte de Blaye', 263.5)),
+""", "tests/test_data/q1.csv"),
 
-# TODO:
-# ("""SELECT employee_id, SUM(freight)
-#  FROM orders
-#  GROUP BY employee_id;
-# """, (8, 7487.8804)),
+("""SELECT employee_id, SUM(freight)
+FROM orders
+GROUP BY employee_id
+ORDER BY employee_id;
+""", "tests/test_data/q2.csv"),
 
 ("""
 SELECT city,
-   AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
-   MAX(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))),
-   MIN(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)))
+   AVG(EXTRACT(year from AGE(birth_date))),
+   MAX(EXTRACT(year from AGE(birth_date))),
+   MIN(EXTRACT(year from AGE(birth_date)))
 FROM employees
 WHERE city = 'London'
 GROUP BY city;
-""", ('London', Decimal('63'), Decimal('69'), Decimal('58'))),
+""", "tests/test_data/q3.csv"),
 
-("""SELECT city, AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))) AS avg_age
+("""SELECT city, AVG(EXTRACT(year from AGE(birth_date))) AS avg_age
   FROM employees
   GROUP BY city
-  HAVING AVG(EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date))) > 60;
-""", ('Redmond', Decimal('87'))),
+  HAVING AVG(EXTRACT(year from AGE(birth_date))) > 60;
+""", "tests/test_data/q4.csv"),
 
-("""SELECT first_name, last_name, EXTRACT(year from AGE(CURRENT_TIMESTAMP, birth_date)) AS age
+("""SELECT first_name, last_name, EXTRACT(year from AGE(birth_date)) AS age
  FROM employees
  ORDER BY age DESC
  LIMIT 3;
-""", ('Margaret', 'Peacock', Decimal('87')))
+""", "tests/test_data/q5.csv")
 )
 
-@pytest.mark.parametrize("execute_query, expected_result", TEST_DATA, indirect=["execute_query"])
-def test_first_row_of_sql_queries(execute_query, expected_result):
-    assert execute_query.fetchone() == expected_result
-    # TODO: test the whole result, instead of only first line?
+@pytest.mark.parametrize("execute_query, read_csv_file", TEST_DATA, indirect=True)
+def test_first_row_of_sql_queries(execute_query, read_csv_file):
+    sql_query_result = [e for e in execute_query]
+    assert sql_query_result == read_csv_file
