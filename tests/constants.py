@@ -7,3 +7,4 @@ HEADERS = {'Content-type': 'application/json'}
 
 ENV_FILENAME = "database.env"
 CONFIG_FILENAME = "tests/test_config.json"
+TEST_DATA_PATH = "tests/test_data/"
